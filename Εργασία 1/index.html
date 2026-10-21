@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Εργασία 1 — Διαχείριση Χρηστών</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="container header-inner">
+      <div>
+        <h1>Διαχείριση Χρηστών</h1>
+        <p class="subtitle">Εργασία 1 · Θέμα Α — εφαρμογή μίας σελίδας (Single Page) για CRUD χρηστών</p>
+      </div>
+      <p class="storage-hint">Τα δεδομένα αποθηκεύονται τοπικά στο <code>localStorage</code> (κλειδί <code>users</code>).</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ============ FORM SECTION ============ -->
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title">Εγγραφή χρήστη</h2>
+
+      <!-- novalidate: we render our own messages, but we still use the native
+           constraint attributes (required / minlength / pattern) together with
+           the Constraint Validation API (setCustomValidity / checkValidity). -->
+      <form id="user-form" novalidate autocomplete="off">
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="firstName">Όνομα</label>
+            <input type="text" id="firstName" name="firstName" required
+                   pattern="[Α-Ω]+([ \-][Α-Ω]+)*" maxlength="60"
+                   aria-describedby="msg-firstName" placeholder="ΓΕΩΡΓΙΟΣ">
+            <p class="field-message" id="msg-firstName" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="lastName">Επώνυμο</label>
+            <input type="text" id="lastName" name="lastName" required
+                   pattern="[Α-Ω]+([ \-][Α-Ω]+)*" maxlength="60"
+                   aria-describedby="msg-lastName" placeholder="ΠΑΠΑΔΟΠΟΥΛΟΣ">
+            <p class="field-message" id="msg-lastName" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required
+                   pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" maxlength="120"
+                   aria-describedby="msg-email" placeholder="georgios@example.gr">
+            <p class="field-message" id="msg-email" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="role">Ρόλος</label>
+            <select id="role" name="role" required aria-describedby="msg-role">
+              <option value="User" selected>User</option>
+              <option value="Admin">Admin</option>
+            </select>
+            <p class="field-message" id="msg-role" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="registrationDate">Ημερομηνία εγγραφής</label>
+            <input type="date" id="registrationDate" name="registrationDate" required readonly
+                   aria-describedby="msg-registrationDate">
+            <p class="field-message" id="msg-registrationDate" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="8" maxlength="128"
+                   aria-describedby="msg-password password-rules" placeholder="123A$6789">
+            <p class="field-message" id="msg-password" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Επιβεβαίωση password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="8" maxlength="128"
+                   aria-describedby="msg-confirmPassword" placeholder="••••••••">
+            <p class="field-message" id="msg-confirmPassword" role="alert"></p>
+          </div>
+
+        </div>
+
+        <!-- Live indicators for every password complexity rule -->
+        <fieldset class="password-rules" id="password-rules">
+          <legend>Απαιτήσεις password</legend>
+          <ul>
+            <li class="rule" id="rule-length"><span class="rule-icon" aria-hidden="true"></span>Τουλάχιστον 8 χαρακτήρες</li>
+            <li class="rule" id="rule-letter"><span class="rule-icon" aria-hidden="true"></span>Τουλάχιστον ένα γράμμα</li>
+            <li class="rule" id="rule-digit"><span class="rule-icon" aria-hidden="true"></span>Τουλάχιστον ένας αριθμός</li>
+            <li class="rule" id="rule-symbol"><span class="rule-icon" aria-hidden="true"></span>Τουλάχιστον ένα από τα !@#$%^&amp;*</li>
+          </ul>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" id="submit-button" class="btn btn-primary">Προσθήκη χρήστη</button>
+          <button type="button" id="cancel-button" class="btn btn-secondary" hidden>Ακύρωση επεξεργασίας</button>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ TABLE SECTION ============ -->
+    <section class="card" aria-labelledby="table-title">
+      <h2 id="table-title">Πίνακας χρηστών</h2>
+
+      <div class="toolbar">
+        <div class="toolbar-field">
+          <label for="search">Αναζήτηση</label>
+          <input type="search" id="search" placeholder="Όνομα, επώνυμο ή email…">
+        </div>
+
+        <div class="toolbar-field">
+          <label for="role-filter">Φίλτρο ρόλου</label>
+          <select id="role-filter">
+            <option value="all" selected>Όλοι</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+          </select>
+        </div>
+
+        <div class="toolbar-field toolbar-actions">
+          <span class="toolbar-label">Εισαγωγή / Εξαγωγή</span>
+          <div class="button-row">
+            <button type="button" id="export-json" class="btn btn-ghost">Export JSON</button>
+            <button type="button" id="export-csv" class="btn btn-ghost">Export CSV</button>
+            <button type="button" id="import-json" class="btn btn-ghost">Import JSON</button>
+            <input type="file" id="import-file" accept="application/json,.json" hidden>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="users-table">
+          <caption class="sr-only">Λίστα χρηστών με δυνατότητα επεξεργασίας και διαγραφής</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="sortable" data-sort="firstName" aria-sort="none">
+                <button type="button" class="sort-button">Όνομα <span class="sort-indicator" aria-hidden="true"></span></button>
+              </th>
+              <th scope="col" class="sortable" data-sort="lastName" aria-sort="none">
+                <button type="button" class="sort-button">Επώνυμο <span class="sort-indicator" aria-hidden="true"></span></button>
+              </th>
+              <th scope="col" class="sortable" data-sort="email" aria-sort="none">
+                <button type="button" class="sort-button">Email <span class="sort-indicator" aria-hidden="true"></span></button>
+              </th>
+              <th scope="col">Ρόλος</th>
+              <th scope="col" class="sortable" data-sort="registrationDate" aria-sort="none">
+                <button type="button" class="sort-button">Ημερομηνία <span class="sort-indicator" aria-hidden="true"></span></button>
+              </th>
+              <th scope="col" class="actions-column">Ενέργειες</th>
+            </tr>
+          </thead>
+          <tbody id="users-body"></tbody>
+        </table>
+        <p class="empty-state" id="empty-state" hidden>Δεν βρέθηκαν χρήστες</p>
+      </div>
+
+      <div class="pagination" id="pagination" hidden>
+        <button type="button" id="prev-page" class="btn btn-ghost">← Προηγούμενη</button>
+        <span id="page-info" class="page-info"></span>
+        <button type="button" id="next-page" class="btn btn-ghost">Επόμενη →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <div class="container">
+      <p>ΟΠΑ · Τεχνολογίες και Προγραμματισμός Εφαρμογών στον Ιστό</p>
+    </div>
+  </footer>
+
+  <!-- ============ CONFIRM MODAL ============ -->
+  <div class="modal-backdrop" id="confirm-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-text">
+      <h3 id="modal-title">Επιβεβαίωση διαγραφής</h3>
+      <p id="modal-text">Είστε βέβαιοι;</p>
+      <div class="modal-actions">
+        <button type="button" id="modal-cancel" class="btn btn-secondary">Άκυρο</button>
+        <button type="button" id="modal-confirm" class="btn btn-danger">Διαγραφή</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ TOAST (undo delete) ============ -->
+  <div class="toast" id="toast" hidden role="status" aria-live="polite">
+    <span id="toast-message">Ο χρήστης διεγράφη.</span>
+    <button type="button" id="toast-undo" class="btn btn-small">Αναίρεση</button>
+  </div>
+
+  <script src="logic.js"></script>
+</body>
+</html>

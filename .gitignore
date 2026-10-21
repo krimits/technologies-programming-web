@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Secrets (μόνο το .env.example παραδίδεται)
+.env
+.env.local
+
+# Build output
+dist/
+build/
+
+# Logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
