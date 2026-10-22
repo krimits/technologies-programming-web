@@ -26,7 +26,7 @@ export default function Navbar() {
           <NavLink to="/cart">
             Καλάθι{count > 0 ? ` (${count})` : ''}
           </NavLink>
-          {isAuthenticated && <NavLink to="/orders">Οι παραγγελίες μου</NavLink>}
+          {isAuthenticated && <NavLink to="/orders">{isAdmin ? 'Παραγγελίες' : 'Οι παραγγελίες μου'}</NavLink>}
           {isAdmin && <NavLink to="/admin">Διαχείριση προϊόντων</NavLink>}
         </nav>
 

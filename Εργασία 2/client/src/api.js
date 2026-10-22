@@ -67,5 +67,6 @@ export const productsApi = {
 
 export const ordersApi = {
   list: () => request('/orders', { auth: true }),
-  create: (items) => request('/orders', { method: 'POST', body: { items }, auth: true })
+  create: (items) => request('/orders', { method: 'POST', body: { items }, auth: true }),
+  updateStatus: (id, status) => request(`/orders/${id}/status`, { method: 'PUT', body: { status }, auth: true })
 };

@@ -547,6 +547,27 @@ select:focus {
   font-size: 1.05rem;
 }
 
+.order-customer {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.order-status-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.order-status-control label {
+  font-size: 0.9rem;
+}
+
+.order-status-control select {
+  width: auto;
+  min-width: 200px;
+}
+
 /* ---------- Footer ---------- */
 
 .app-footer {
