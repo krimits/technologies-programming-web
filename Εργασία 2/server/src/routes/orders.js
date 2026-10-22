@@ -43,6 +43,11 @@ ordersRouter.post('/', requireAuth, async (req, res, next) => {
       return res.status(400).json({ message: 'Ένα ή περισσότερα προϊόντα δεν υπάρχουν.' });
     }
 
+    // Προϊόν με available: false απορρίπτεται — δεν μπορεί να παραγγελθεί.
+    if (products.some((product) => !product.available)) {
+      return res.status(400).json({ message: 'Ένα ή περισσότερα προϊόντα δεν είναι διαθέσιμα.' });
+    }
+
     // 2. Φτιάχνουμε τα items με τις τιμές της βάσης και υπολογίζουμε το σύνολο.
     const orderItems = [];
     let total = 0;

@@ -68,7 +68,9 @@ authRouter.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body ?? {};
 
-    if (!email || !password) {
+    // Type-guard: μη αλφαριθμητικό email/password (π.χ. JSON object) έσπαγε το
+    // bcrypt.compare με 500 — πρέπει να απορρίπτεται ως 400 πριν φτάσει εκεί.
+    if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
       return res.status(400).json({ message: 'Συμπληρώστε email και κωδικό.' });
     }
 

@@ -24,7 +24,10 @@ productsRouter.get('/', async (req, res, next) => {
 
     const filter = {};
     if (search) {
-      filter.name = { $regex: String(search).trim(), $options: 'i' };
+      // Escape των regex ειδικών χαρακτήρων ώστε ο όρος αναζήτησης να είναι
+      // κυριολεκτικό κείμενο (ένα «(» ή «*» δεν πρέπει να προκαλεί 500 από το $regex).
+      const escaped = String(search).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.name = { $regex: escaped, $options: 'i' };
     }
     if (category && category !== 'all') {
       filter.category = category;
