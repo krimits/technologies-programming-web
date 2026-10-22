@@ -79,7 +79,7 @@ npm run dev
 │   │   ├── middleware/          # auth (JWT/roles), errorHandler
 │   │   ├── utils/validators.js  # κανόνες επικύρωσης
 │   │   └── seed.js              # npm run seed
-│   └── tests/api.test.js        # 21 integration tests (node:test + supertest)
+│   └── tests/api.test.js        # 30 integration tests (node:test + supertest)
 └── screenshots.pdf
 ```
 
@@ -146,12 +146,15 @@ cd server
 npm test
 ```
 
-21 integration tests (`node:test` + `supertest` + `mongodb-memory-server` — σηκώνουν προσωρινή
+30 integration tests (`node:test` + `supertest` + `mongodb-memory-server` — σηκώνουν προσωρινή
 MongoDB στη μνήμη, δεν χρειάζεται εγκατεστημένο server). Καλύπτουν: hashing, μη επιστροφή
-password, 201/400 στην εγγραφή, duplicate email, 401 σε λάθος κωδικό, 401 χωρίς token,
-403 για User, 201 για Admin, 404, 400 για αρνητική τιμή/ποσότητα/κενό καλάθι/άγνωστο
-προϊόν, υπολογισμό total από τη βάση (με παραποιημένη τιμή από τον client) και απομόνωση
-παραγγελιών ανά χρήστη. Δείτε το `ΠΙΝΑΚΑΣ-ΔΟΚΙΜΩΝ.md`.
+password, 201/400 στην εγγραφή, duplicate email, 401 σε λάθος κωδικό, 400 σε μη αλφαριθμητικό
+password (όχι 500), 401 χωρίς token, 403 για User, 201/200 για Admin σε POST/PUT/DELETE
+προϊόντων, 404 (έγκυρο αλλά άγνωστο και μη έγκυρο id), 400 για αρνητική τιμή/ποσότητα/κενό
+καλάθι/άγνωστο ή μη έγκυρο productId/μη διαθέσιμο προϊόν, αναζήτηση με regex ειδικούς
+χαρακτήρες, υπολογισμό total από τη βάση (με παραποιημένη τιμή από τον client), απομόνωση
+παραγγελιών ανά χρήστη και αλλαγή κατάστασης παραγγελίας μόνο από Admin. Δείτε το
+`ΠΙΝΑΚΑΣ-ΔΟΚΙΜΩΝ.md`.
 
 ## Πίνακας δοκιμών
 
@@ -168,7 +171,9 @@ password, 201/400 στην εγγραφή, duplicate email, 401 σε λάθος 
   `{ products, page, pageSize, total, totalPages }` (έτοιμο για buttons στη React).
 - **Κατάσταση παραγγελίας:** ο Admin αλλάζει την κατάσταση μιας παραγγελίας
   (`PUT /api/orders/:id/status`: «Σε επεξεργασία → Απεστάλη → Ολοκληρώθηκε»), και ο User
-  βλέπει την ενημερωμένη κατάσταση στο ιστορικό του.
+  βλέπει την ενημερωμένη κατάσταση στο ιστορικό του. Στη σελίδα παραγγελιών ο Admin βλέπει
+  τα στοιχεία του πελάτη κάθε παραγγελίας και αλλάζει την κατάσταση με select, ενώ ο User
+  βλέπει μόνο τις δικές του.
 
 ## Γνωστά περιορισμάνα / σημειώσεις
 

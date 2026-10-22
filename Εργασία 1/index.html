@@ -25,15 +25,17 @@
       <h2 id="form-title">Εγγραφή χρήστη</h2>
 
       <!-- novalidate: we render our own messages, but we still use the native
-           constraint attributes (required / minlength / pattern) together with
-           the Constraint Validation API (setCustomValidity / checkValidity). -->
+           constraint attributes (required / minlength) together with
+           the Constraint Validation API (setCustomValidity / checkValidity).
+           Χωρίς attribute pattern: ο κανόνας ορίζεται ΜΟΝΟ στο JS regex,
+           ώστε να μην υπάρχουν δύο πηγές αλήθειας που μπορούν να αποκλίνουν. -->
       <form id="user-form" novalidate autocomplete="off">
         <div class="form-grid">
 
           <div class="field">
             <label for="firstName">Όνομα</label>
             <input type="text" id="firstName" name="firstName" required
-                   pattern="[Α-Ω]+([ \-][Α-Ω]+)*" maxlength="60"
+                   maxlength="60"
                    aria-describedby="msg-firstName" placeholder="ΓΕΩΡΓΙΟΣ">
             <p class="field-message" id="msg-firstName" role="alert"></p>
           </div>
@@ -41,7 +43,7 @@
           <div class="field">
             <label for="lastName">Επώνυμο</label>
             <input type="text" id="lastName" name="lastName" required
-                   pattern="[Α-Ω]+([ \-][Α-Ω]+)*" maxlength="60"
+                   maxlength="60"
                    aria-describedby="msg-lastName" placeholder="ΠΑΠΑΔΟΠΟΥΛΟΣ">
             <p class="field-message" id="msg-lastName" role="alert"></p>
           </div>
@@ -49,7 +51,7 @@
           <div class="field">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required
-                   pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" maxlength="120"
+                   maxlength="120"
                    aria-describedby="msg-email" placeholder="georgios@example.gr">
             <p class="field-message" id="msg-email" role="alert"></p>
           </div>

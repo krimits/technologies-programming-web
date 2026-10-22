@@ -320,7 +320,7 @@ const formFields = [
  * Validates one field and renders its status message.
  * The custom rule is mirrored into the browser's validity state through
  * setCustomValidity(), so checkValidity() reflects our rule as well as the
- * native ones (required / pattern / minlength).
+ * native ones (required / minlength).
  */
 function validateField(field) {
   const input = document.getElementById(field.id);
