@@ -18,7 +18,15 @@ export default function Login() {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
     if (errors[name]) {
-      setErrors((current) => ({ ...current, [name]: validateEmail(value).message }));
+      // Κάθε πεδίο επαληθεύεται με τον δικό του κανόνα — το email δεν πρέπει
+      // να εφαρμόζεται στο password (bug: έδειχνε «Μη έγκυρη μορφή email.» εκεί).
+      const message =
+        name === 'email'
+          ? validateEmail(value).message
+          : value
+            ? ''
+            : 'Ο κωδικός είναι υποχρεωτικό.';
+      setErrors((current) => ({ ...current, [name]: message }));
     }
   };
 

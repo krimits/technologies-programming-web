@@ -36,14 +36,17 @@ export default function Cart() {
     }
   };
 
+  // Μετά από επιτυχημένο checkout το καλάθι αδειάζει, οπότε το μήνυμα επιτυχίας
+  // πρέπει να εμφανίζεται και εδώ — αλλιώς ο χρήστης βλέπει μόνο «Το καλάθι είναι κενό».
   if (items.length === 0) {
     return (
       <section className="container">
         <div className="page-head">
           <h1>Το καλάθι σου</h1>
         </div>
+        {success && <Message type="success">{success}</Message>}
         <p className="empty-state">
-          Το καλάθι είναι κενό. <Link to="/">Πήγαι στον κατάλογο</Link>
+          Το καλάθι είναι κενό. <Link to="/">Πήγαινε στον κατάλογο</Link>
         </p>
       </section>
     );

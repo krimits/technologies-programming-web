@@ -70,6 +70,12 @@ export default function AdminProducts() {
 
     try {
       await productsApi.remove(product._id);
+      // Αν διαγραφόταν το προϊόν που ήταν στη φόρμα επεξεργασίας, καθαρίζουμε
+      // τη φόρμα — αλλιώς έμενε γεμάτη σε κατάσταση «Επεξεργασία προϊόντος».
+      if (editingId === product._id) {
+        setEditingId(null);
+        setForm(EMPTY_FORM);
+      }
       setSuccess('Το προϊόν διαγράφηκε.');
       load();
     } catch (err) {
