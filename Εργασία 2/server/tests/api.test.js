@@ -144,6 +144,26 @@ test('σύνδεση με λάθος κωδικό → 401', async () => {
   assert.equal(response.status, 401);
 });
 
+test('σύνδεση με μη αλφαριθμητικό password (JSON object) → 400, όχι 500', async () => {
+  await createUser({ email: 'maria@aueb.gr' });
+
+  const response = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'maria@aueb.gr', password: { $gt: '' } });
+
+  assert.equal(response.status, 400);
+});
+
+test('σύνδεση με αριθμητικό password → 400, όχι 500', async () => {
+  await createUser({ email: 'maria@aueb.gr' });
+
+  const response = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'maria@aueb.gr', password: 12345678 });
+
+  assert.equal(response.status, 400);
+});
+
 /* ---- Προϊόντα & ρόλοι ---- */
 
 test('GET /api/products είναι public', async () => {
@@ -195,8 +215,13 @@ test('POST /api/products με αρνητική τιμή → 400', async () => {
   assert.equal(response.status, 400);
 });
 
-test('GET /api/products/:id άγνωστο id → 404', async () => {
-  const response = await request(app).get('/api/products/64b8f0a0a0a0a0a0a0a0a0a');
+test('GET /api/products/:id άγνωστο αλλά έγκυρο id → 404', async () => {
+  const response = await request(app).get('/api/products/64b8f0a0a0a0a0a0a0a0a0a0');
+  assert.equal(response.status, 404);
+});
+
+test('GET /api/products/:id μη έγκυρο id → 404', async () => {
+  const response = await request(app).get('/api/products/not-an-id');
   assert.equal(response.status, 404);
 });
 
@@ -205,6 +230,90 @@ test('μη έγκυρο token → 401', async () => {
     .get('/api/orders')
     .set('Authorization', 'Bearer not-a-real-token');
   assert.equal(response.status, 401);
+});
+
+test('GET /api/products με regex ειδικούς χαρακτήρες στο search → 200 (όχι 500)', async () => {
+  await Product.create({ name: 'Βιβλίο (Έκδοση 2)', category: 'Βιβλία', price: 10 });
+
+  const response = await request(app).get('/api/products').query({ search: '(Έκδοση' });
+  assert.equal(response.status, 200);
+});
+
+test('PUT /api/products/:id με Admin → 200, με User → 403', async () => {
+  await createUser({ email: 'admin@aueb.gr', role: 'Admin' });
+  await createUser({ email: 'user@aueb.gr', role: 'User' });
+  const adminToken = await login(app, 'admin@aueb.gr');
+  const userToken = await login(app, 'user@aueb.gr');
+
+  const product = await Product.create({ name: 'Βιβλίο', category: 'Βιβλία', price: 10 });
+
+  const asUser = await request(app)
+    .put(`/api/products/${product._id}`)
+    .set('Authorization', `Bearer ${userToken}`)
+    .send({ price: 99 });
+  assert.equal(asUser.status, 403);
+
+  const asAdmin = await request(app)
+    .put(`/api/products/${product._id}`)
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({ price: 15.5 });
+  assert.equal(asAdmin.status, 200);
+  assert.equal(asAdmin.body.product.price, 15.5);
+});
+
+test('DELETE /api/products/:id με Admin → 200, με User → 403', async () => {
+  await createUser({ email: 'admin@aueb.gr', role: 'Admin' });
+  await createUser({ email: 'user@aueb.gr', role: 'User' });
+  const adminToken = await login(app, 'admin@aueb.gr');
+  const userToken = await login(app, 'user@aueb.gr');
+
+  const product = await Product.create({ name: 'Βιβλίο', category: 'Βιβλία', price: 10 });
+
+  const asUser = await request(app)
+    .delete(`/api/products/${product._id}`)
+    .set('Authorization', `Bearer ${userToken}`);
+  assert.equal(asUser.status, 403);
+
+  const asAdmin = await request(app)
+    .delete(`/api/products/${product._id}`)
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(asAdmin.status, 200);
+
+  const after = await Product.findById(product._id);
+  assert.equal(after, null);
+});
+
+test('PUT /api/orders/:id/status με Admin → 200 και ενημερωμένη κατάσταση', async () => {
+  await createUser({ email: 'admin@aueb.gr', role: 'Admin' });
+  await createUser({ email: 'user@aueb.gr', role: 'User' });
+  const adminToken = await login(app, 'admin@aueb.gr');
+  const userToken = await login(app, 'user@aueb.gr');
+
+  const product = await Product.create({ name: 'Βιβλίο', category: 'Βιβλία', price: 10 });
+  const createResponse = await request(app)
+    .post('/api/orders')
+    .set('Authorization', `Bearer ${userToken}`)
+    .send({ items: [{ productId: String(product._id), qty: 1 }] });
+  const orderId = createResponse.body.order._id;
+
+  const asUser = await request(app)
+    .put(`/api/orders/${orderId}/status`)
+    .set('Authorization', `Bearer ${userToken}`)
+    .send({ status: 'Απεστάλη' });
+  assert.equal(asUser.status, 403);
+
+  const asAdmin = await request(app)
+    .put(`/api/orders/${orderId}/status`)
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({ status: 'Απεστάλη' });
+  assert.equal(asAdmin.status, 200);
+  assert.equal(asAdmin.body.order.status, 'Απεστάλη');
+
+  const invalid = await request(app)
+    .put(`/api/orders/${orderId}/status`)
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({ status: 'Μη έγκυρη κατάσταση' });
+  assert.equal(invalid.status, 400);
 });
 
 /* ---- Παραγγελίες ---- */
@@ -260,7 +369,32 @@ test('παραγγελία με άγνωστο προϊόν → 400', async () =
   const response = await request(app)
     .post('/api/orders')
     .set('Authorization', `Bearer ${token}`)
-    .send({ items: [{ productId: '64b8f0a0a0a0a0a0a0a0a0a', qty: 1 }] });
+    .send({ items: [{ productId: '64b8f0a0a0a0a0a0a0a0a0a0', qty: 1 }] });
+
+  assert.equal(response.status, 400);
+});
+
+test('παραγγελία με μη έγκυρο productId → 400', async () => {
+  await createUser({ email: 'user@aueb.gr', role: 'User' });
+  const token = await login(app, 'user@aueb.gr');
+
+  const response = await request(app)
+    .post('/api/orders')
+    .set('Authorization', `Bearer ${token}`)
+    .send({ items: [{ productId: 'not-an-id', qty: 1 }] });
+
+  assert.equal(response.status, 400);
+});
+
+test('παραγγελία με μη διαθέσιμο προϊόν (available: false) → 400', async () => {
+  await createUser({ email: 'user@aueb.gr', role: 'User' });
+  const token = await login(app, 'user@aueb.gr');
+  const product = await Product.create({ name: 'Βιβλίο', category: 'Βιβλία', price: 20, available: false });
+
+  const response = await request(app)
+    .post('/api/orders')
+    .set('Authorization', `Bearer ${token}`)
+    .send({ items: [{ productId: String(product._id), qty: 1 }] });
 
   assert.equal(response.status, 400);
 });
