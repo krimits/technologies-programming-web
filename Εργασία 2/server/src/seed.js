@@ -1,6 +1,13 @@
 /* Script αρχικοποίησης της βάσης: npm run seed
-   Γεμίζει τη βάση με τουλάχιστον 10 προϊόντα, έναν Admin και έναν User. */
+   Γεμίζει τη βάση με τουλάχιστον 10 προϊόντα, έναν Admin και έναν User.
 
+   Τα προϊόντα διαβάζονται από αρχείο JSON με τη μορφή της «Εξαγωγής JSON» της
+   Εργασίας 1 (κλειδί products του localStorage). Έτσι τα δεδομένα της Εργασίας 1
+   μεταφέρονται στη MongoDB:
+     npm run seed                      -> data/products.json (ίδια με τα αρχικά της Ε1)
+     npm run seed -- <αρχείο.json>     -> π.χ. το products.json που κατέβασε η Ε1 */
+
+import { readFile } from 'node:fs/promises';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { config } from './config/env.js';
@@ -8,22 +15,21 @@ import { User } from './models/user.js';
 import { Product } from './models/product.js';
 import { Order } from './models/order.js';
 
-const products = [
-  { name: 'Προσωπικός Υπολογιστής', category: 'Ηλεκτρονικά', price: 899.9, description: 'Με επεξεργαστή 8 πυρήνων.' },
-  { name: 'Οθόνη 27"', category: 'Ηλεκτρονικά', price: 279.5, description: 'Full HD, 75 Hz.' },
-  { name: 'Πληκτρολόγιο RGB', category: 'Ηλεκτρονικά', price: 49.9, description: 'Μηχανικό με RGB φωτισμό.' },
-  { name: 'Ασύρματο ποντίκι', category: 'Ηλεκτρονικά', price: 24.5, description: 'Εργονομικό, Bluetooth.' },
-  { name: 'Βιβλίο: JavaScript', category: 'Βιβλία', price: 32.0, description: 'Οδηγός για σύγχρονη JavaScript.' },
-  { name: 'Βιβλίο: React', category: 'Βιβλία', price: 38.5, description: 'Από τα βασικά στα hooks.' },
-  { name: 'Βιβλίο: Βάση δεδομένων', category: 'Βιβλία', price: 29.0, description: 'Σχεδιασμός σχημάτων και ερωτήματα.' },
-  { name: 'Τσάντα από καντόν', category: 'Τσάντες', price: 45.0, description: 'Φιτζάκι καφέ, χειροποίητο.' },
-  { name: 'Παλτό δερμάτινο', category: 'Αξεσουάρ', price: 59.0, description: 'Αυθεντικό δέρμα.' },
-  { name: 'Φανός LED', category: 'Αξεσουάρ', price: 18.5, description: 'Με 3 επίπεδα φωτισμού.' },
-  { name: 'Ελληνικό λεξικό', category: 'Βιβλία', price: 19.9, description: 'Μπλε εξώφυλλο.' },
-  { name: 'Μπλε μπλουζάκι', category: 'Ένδυση', price: 22.0, description: '100% βαμβάκι, όλα τα μεγέθη.' }
-];
+const DEFAULT_PRODUCTS_FILE = new URL('../data/products.json', import.meta.url);
+
+/** Διαβάζει τα προϊόντα και κρατά μόνο τα πεδία του σχήματος
+ *  (το id της Εργασίας 1 αγνοείται: η MongoDB δίνει δικό της _id). */
+async function loadProducts(file) {
+  const records = JSON.parse(await readFile(file, 'utf8'));
+  if (!Array.isArray(records)) {
+    throw new Error('Το αρχείο προϊόντων πρέπει να περιέχει πίνακα JSON.');
+  }
+  return records.map(({ name, category, price, available = true }) => ({ name, category, price, available }));
+}
 
 async function main() {
+  const products = await loadProducts(process.argv[2] ?? DEFAULT_PRODUCTS_FILE);
+
   await mongoose.connect(config.mongoUri);
   console.log('[seed] Σύνδεση OK');
 
@@ -49,9 +55,8 @@ async function main() {
     role: 'User'
   });
 
-  const created = await Product.insertMany(
-    products.map((product, index) => ({ ...product, available: index % 5 !== 4 }))
-  );
+  // Το insertMany εφαρμόζει τους κανόνες του σχήματος (required, min) σε κάθε προϊόν.
+  const created = await Product.insertMany(products);
 
   console.log(`[seed] ${created.length} προϊόντα, Admin: ${admin.email}, User: ${user.email}`);
   await mongoose.disconnect();

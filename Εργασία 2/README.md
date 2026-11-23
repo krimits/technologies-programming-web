@@ -6,6 +6,10 @@
 προϊόντων, καλάθι στο `localStorage`, παραγγελίες με υπολογισμό τιμών **από τη βάση**,
 ιστορικό παραγγελιών και διαχείριση προϊόντων για Admin.
 
+Είναι η επέκταση της **Εργασίας 1 (Θέμα Β: Mini e-shop)**: τα προϊόντα και οι χρήστες
+μεταφέρονται από το `localStorage` στη MongoDB, οι κανόνες επικύρωσης της φόρμας εγγραφής
+μένουν ίδιοι και η σελίδα ξαναγράφεται σε React (βλ. «Σχέση με την Εργασία 1»).
+
 **Μέλη ομάδας:** ........................ (ΑΜ: p3xxxxxx) — υπεύθυνο/α: ................................
 ........................ (ΑΜ: p3yyyyyy) — υπεύθυνο/α: ................................
 
@@ -27,7 +31,7 @@ cd server
 npm install
 cp .env.example .env        # Windows: copy .env.example .env
 # ρύθρισε το .env: MONGO_URI, JWT_SECRET, PORT
-npm run seed                # γεμίζει τη βάση: 12 προϊόντα, 1 Admin, 1 User
+npm run seed                # γεμίζει τη βάση: 12 προϊόντα (data/products.json), 1 Admin, 1 User
 npm run dev                 # ή `npm start`
 ```
 
@@ -70,6 +74,7 @@ npm run dev
 ├── server/                      # Express + Mongoose
 │   ├── .env.example
 │   ├── package.json
+│   ├── data/products.json       # αρχικά προϊόντα (ίδια με την Εργασία 1)
 │   ├── src/
 │   │   ├── server.js            # σύνδεση DB + listen
 │   │   ├── app.js               # createApp() — routes + middleware
@@ -82,6 +87,28 @@ npm run dev
 │   └── tests/api.test.js        # 30 integration tests (node:test + supertest)
 └── screenshots.pdf
 ```
+
+## Σχέση με την Εργασία 1
+
+| Εργασία 1 (HTML/CSS/JS, `localStorage`) | Εργασία 2 |
+|---|---|
+| κλειδί `products`, κλάση `Product` (name, category, price, available) | collection `products`, σχήμα `models/product.js` |
+| κλειδί `users`, κλάση `User` (κωδικός σε απλό κείμενο, μόνο για εξάσκηση) | collection `users`, κωδικός ως hash με bcrypt |
+| `ProductStore.search({ text, category, sortKey })` | `GET /api/products?search=&category=&sort=` |
+| `ProductStore.add / update / remove` | `POST` / `PUT` / `DELETE /api/products/:id` (Admin) |
+| κανόνες επικύρωσης (ενότητα 3 του `logic.js`) | `client/src/lib/validators.js` και `server/src/utils/validators.js` |
+| μεταβλητές χρωμάτων στο `:root` του `style.css` | ίδιες μεταβλητές στο `client/src/styles.css` |
+
+**Μεταφορά δεδομένων.** Το `npm run seed` διαβάζει τα προϊόντα από το `server/data/products.json`,
+που έχει τα ίδια 12 προϊόντα με τα αρχικά της Εργασίας 1. Για να φορτωθούν τα προϊόντα που
+έχετε στον browser, πατήστε «Εξαγωγή JSON» στην Εργασία 1 και μετά:
+
+```bash
+npm run seed -- ../../products.json     # η διαδρομή του αρχείου που κατέβηκε
+```
+
+Το `id` της Εργασίας 1 αγνοείται (η MongoDB δίνει δικό της `_id`) και κάθε προϊόν ελέγχεται από
+το σχήμα Mongoose πριν αποθηκευτεί.
 
 ## REST API
 

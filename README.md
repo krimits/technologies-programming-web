@@ -5,8 +5,8 @@
 
 | Φάκελος | Περιεχόμενο |
 |---|---|
-| `Εργασία 1/` | Θέμα Α — CRUD εφαρμογή διαχείρισης χρηστών (HTML/CSS/JS, χωρίς frameworks) |
-| `Εργασία 2/` | Mini e-shop — React (Vite) + Express + MongoDB/Mongoose |
+| `Εργασία 1/` | Θέμα Β — Mini e-shop: CRUD προϊόντων + εγγραφή πελάτη με live validation (HTML/CSS/JS, χωρίς frameworks) |
+| `Εργασία 2/` | Mini e-shop — η επέκταση της Εργασίας 1 σε React (Vite) + Express + MongoDB/Mongoose |
 | `ΕΡΓΑΣΙΕΣ/` | Χρονοδιάγραμμα, checklists, specs, README templates (οργάνωση/πλάνο) |
 | `ΕΡΓΑΣΙΕΣ 1 και 2 - 2026-27 (κείμενο).txt` | Το κείμενο της εργασίας σε μορφή text (για αναφορά/αναζήτηση) |
 
@@ -15,8 +15,12 @@
 ## Τρέξιμο γρήγορα
 
 **Εργασία 1** — χωρίς εγκατάσταση: άνοιξε `Εργασία 1/index.html` σε browser.
-(Αν δεν αποθηκεύονται τα δεδομένα στο `localStorage`, τρέξε έναν static server, π.χ.
-`npx serve "Εργασία 1"`.)
+Στην πρώτη επίσκεψη ο κατάλογος γεμίζει με 12 ενδεικτικά προϊόντα (κλειδί `products`).
+
+**Από την Εργασία 1 στην Εργασία 2.** Η Εργασία 2 ξεκινά με τα ίδια 12 προϊόντα
+(`Εργασία 2/server/data/products.json`), τους ίδιους κανόνες επικύρωσης και τις ίδιες
+μεταβλητές χρωμάτων. Ένα αρχείο από την «Εξαγωγή JSON» της Εργασίας 1 φορτώνεται στη
+MongoDB με `npm run seed -- <διαδρομή>/products.json`.
 
 **Εργασία 2** — χρειάζεται Node.js 18+ και MongoDB:
 
@@ -24,7 +28,7 @@
 cd "Εργασία 2/server"
 npm install
 copy .env.example .env      # Windows (Linux/macOS: cp)
-npm run seed                # 12 προϊόντα, 1 Admin, 1 User
+npm run seed                # 12 προϊόντα (από data/products.json), 1 Admin, 1 User
 npm run dev                 # API στο :4000
 
 cd ../client
@@ -38,8 +42,7 @@ npm run dev                 # app στο http://localhost:5173
 
 | Έργασία | Έλεγχοι | Αποτέλεσμα |
 |---|---|---|
-| Εργασία 1 | 49 unit tests (κανόνες ονόματος/password/email, `UserStore`/localStorage) + 30 end-to-end tests σε headless Edge | ✅ 79/79 |
-| Εργασία 2 | 21 integration tests του REST API (`node:test` + `supertest` + `mongodb-memory-server`) | ✅ 21/21 |
+| Εργασία 1 | 45 end-to-end tests σε headless Chromium (κανόνες επικύρωσης, CRUD, ταξινόμηση, αναζήτηση/φίλτρο, σελιδοποίηση, αναίρεση, import/export, `localStorage`, κινητό 360px) | ✅ 45/45 |
+| Εργασία 2 | 30 integration tests του REST API (`node:test` + `supertest` + `mongodb-memory-server`) | ✅ 30/30 |
 
-Οι εντολές εκτέλεσης των tests: `cd "Εργασία 1"` → `node <test file>` (βλ. README) και
-`cd "Εργασία 2/server" && npm test`.
+Τα tests της Εργασίας 2: `cd "Εργασία 2/server" && npm test`.
