@@ -1,0 +1,14 @@
+[
+  { "name": "Laptop 15\"", "category": "Ηλεκτρονικά", "price": 899.9, "available": true },
+  { "name": "Οθόνη 27\"", "category": "Ηλεκτρονικά", "price": 279.5, "available": true },
+  { "name": "Μηχανικό πληκτρολόγιο", "category": "Ηλεκτρονικά", "price": 89.9, "available": true },
+  { "name": "Ασύρματο ποντίκι", "category": "Ηλεκτρονικά", "price": 24.5, "available": false },
+  { "name": "Βιβλίο: Σύγχρονη JavaScript", "category": "Βιβλία", "price": 32, "available": true },
+  { "name": "Βιβλίο: Μαθαίνοντας React", "category": "Βιβλία", "price": 38.5, "available": true },
+  { "name": "Βιβλίο: Βάσεις Δεδομένων", "category": "Βιβλία", "price": 29, "available": false },
+  { "name": "Βαμβακερό T-shirt", "category": "Ένδυση", "price": 19.9, "available": true },
+  { "name": "Φούτερ με κουκούλα", "category": "Ένδυση", "price": 44, "available": true },
+  { "name": "Σακίδιο για laptop", "category": "Αξεσουάρ", "price": 49, "available": true },
+  { "name": "Θερμός 500 ml", "category": "Σπίτι", "price": 18.5, "available": true },
+  { "name": "Φωτιστικό γραφείου LED", "category": "Σπίτι", "price": 34.9, "available": false }
+]

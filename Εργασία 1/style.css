@@ -1,6 +1,8 @@
 /* =========================================================
-   Εργασία 1 — Θέμα Α: Διαχείριση χρηστών
-   style.css — layout, components, responsive behaviour
+   Εργασία 1 — Θέμα Β: Mini e-shop
+   style.css — διάταξη, στοιχεία, responsive συμπεριφορά
+   Τα χρώματα είναι μεταβλητές (custom properties) στο :root,
+   ώστε να ξαναχρησιμοποιηθούν όπως είναι στην Εργασία 2.
    ========================================================= */
 
 :root {
@@ -12,14 +14,15 @@
   --text-muted: #64748b;
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
+  --primary-soft: #eff6ff;
   --danger: #dc2626;
   --danger-dark: #b91c1c;
-  --success: #16a34a;
-  --warning: #d97706;
+  --success: #15803d;
+  --warning-soft: #fef9c3;
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.3);
 }
 
 *,
@@ -28,26 +31,22 @@
   box-sizing: border-box;
 }
 
-/* The `hidden` attribute must win over the component display rules below
-   (.btn, .pagination, .toast use flex/inline-flex). */
+/* Το γνώρισμα hidden πρέπει να υπερισχύει των display: flex παρακάτω */
 [hidden] {
   display: none !important;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.55;
-  /* Prevents the whole page from scrolling sideways on small screens */
-  overflow-x: hidden;
 }
 
 .container {
@@ -57,6 +56,7 @@ body {
   padding: 0 1rem;
 }
 
+/* Κείμενο μόνο για αναγνώστες οθόνης */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -69,46 +69,71 @@ body {
   border: 0;
 }
 
+code {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 0 0.3rem;
+  border-radius: 4px;
+}
+
 /* ---------------- Header / footer ---------------- */
 
 .app-header {
   background: linear-gradient(135deg, #1e3a8a, #2563eb);
   color: #fff;
-  padding: 1.75rem 0;
+  padding: 1.5rem 0;
 }
 
 .header-inner {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 2rem;
-  align-items: center;
+  gap: 1rem 2rem;
+  align-items: flex-end;
   justify-content: space-between;
 }
 
-.app-header h1 {
+.eyebrow {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bfdbfe;
+}
+
+.app-header h1 {
+  margin: 0.1rem 0 0;
+  font-size: 1.75rem;
   letter-spacing: -0.01em;
 }
 
 .subtitle {
   margin: 0.25rem 0 0;
   color: #dbeafe;
-  font-size: 0.95rem;
 }
 
-.storage-hint {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #bfdbfe;
-  max-width: 22rem;
+.header-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.storage-hint code {
+.header-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.header-nav a:hover,
+.header-nav a:focus-visible {
   background: rgba(255, 255, 255, 0.15);
-  padding: 0.05rem 0.35rem;
-  border-radius: 5px;
-  font-size: 0.85em;
+  outline: none;
 }
 
 .app-footer {
@@ -120,10 +145,10 @@ body {
 }
 
 .app-footer p {
-  margin: 0;
+  margin: 0 0 0.25rem;
 }
 
-/* ---------------- Cards ---------------- */
+/* ---------------- Κάρτες ---------------- */
 
 main.container {
   padding-top: 1.5rem;
@@ -137,19 +162,42 @@ main.container {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 1.5rem;
+  min-width: 0;          /* επιτρέπει στο περιεχόμενο να στενέψει μέσα στο grid */
+  scroll-margin-top: 1rem;
 }
 
-.card > h2 {
+.card h2 {
   margin: 0 0 1.25rem;
   font-size: 1.2rem;
+  scroll-margin-top: 1rem;
 }
 
-/* ---------------- Form ---------------- */
+.card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-head h2 {
+  margin: 0;
+}
+
+.result-count {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ---------------- Φόρμες ---------------- */
 
 .form-grid {
   display: grid;
-  gap: 1rem 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
 .field {
@@ -159,7 +207,8 @@ main.container {
   min-width: 0;
 }
 
-label {
+label,
+.field-checkbox legend {
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -168,7 +217,7 @@ input,
 select {
   width: 100%;
   padding: 0.6rem 0.7rem;
-  border: 1px solid var(--border);
+  border: 1px solid #cbd5e1;
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
@@ -186,10 +235,9 @@ select:focus {
 input[readonly] {
   background: var(--surface-alt);
   color: var(--text-muted);
-  cursor: not-allowed;
 }
 
-/* Validation states driven by the JS (aria-invalid) */
+/* Καταστάσεις επικύρωσης (τις βάζει το FormController) */
 input.is-valid,
 select.is-valid {
   border-color: var(--success);
@@ -198,11 +246,12 @@ select.is-valid {
 input.is-invalid,
 select.is-invalid {
   border-color: var(--danger);
+  background: #fff7f7;
 }
 
 .field-message {
   margin: 0;
-  min-height: 1.15rem;
+  min-height: 1.3rem;    /* κρατά χώρο ώστε η φόρμα να μη «χοροπηδά» */
   font-size: 0.82rem;
   color: var(--text-muted);
 }
@@ -212,15 +261,50 @@ select.is-invalid {
   font-weight: 600;
 }
 
+.field-message.is-valid::before {
+  content: "✔ ";
+}
+
 .field-message.is-invalid {
   color: var(--danger);
   font-weight: 600;
 }
 
-/* Password complexity indicators */
+/* Checkbox διαθεσιμότητας: fieldset χωρίς το προεπιλεγμένο πλαίσιο */
+.field-checkbox {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field-checkbox legend {
+  padding: 0;
+  margin-bottom: 0.35rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  padding: 0 0.8rem;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+/* Ενδείξεις κανόνων password */
 .password-rules {
-  margin: 1.25rem 0 0;
-  border: 1px dashed var(--border);
+  margin: 0.5rem 0 0;
+  border: 1px dashed #cbd5e1;
   border-radius: var(--radius-sm);
   padding: 0.75rem 1rem 0.9rem;
 }
@@ -237,8 +321,14 @@ select.is-invalid {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.3rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.3rem 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 640px) {
+  .password-rules ul {
+    grid-template-columns: 1fr;
+  }
 }
 
 .rule {
@@ -246,7 +336,7 @@ select.is-invalid {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.88rem;
-  color: var(--text-muted);
+  color: var(--danger);
 }
 
 .rule-icon {
@@ -256,11 +346,15 @@ select.is-invalid {
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 50%;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #fff;
-  background: var(--text-muted);
+  background: var(--danger);
   flex: 0 0 auto;
+}
+
+.rule-icon::before {
+  content: "✘";
 }
 
 .rule.is-met {
@@ -275,23 +369,19 @@ select.is-invalid {
   content: "✔";
 }
 
-.rule:not(.is-met) .rule-icon::before {
-  content: "✘";
-}
-
-/* Form actions */
 .form-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .form-status {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
+  color: var(--text-muted);
 }
 
 .form-status.is-success {
@@ -302,7 +392,7 @@ select.is-invalid {
   color: var(--danger);
 }
 
-/* ---------------- Buttons ---------------- */
+/* ---------------- Κουμπιά ---------------- */
 
 .btn {
   display: inline-flex;
@@ -316,12 +406,19 @@ select.is-invalid {
   font-weight: 600;
   font-size: 0.92rem;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.btn:focus-visible {
+.btn:focus-visible,
+.btn-link:focus-visible,
+.sort-button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -349,8 +446,8 @@ select.is-invalid {
   border-color: var(--border);
 }
 
-.btn-ghost:hover {
-  background: #eff6ff;
+.btn-ghost:hover:not(:disabled) {
+  background: var(--primary-soft);
   border-color: var(--primary);
 }
 
@@ -364,21 +461,16 @@ select.is-invalid {
 }
 
 .btn-small {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
   background: #fff;
-  color: var(--primary);
-  border-color: currentColor;
-}
-
-.btn-small:hover {
-  background: #eff6ff;
+  color: var(--primary-dark);
 }
 
 .btn-link {
   background: none;
   border: none;
-  padding: 0.25rem 0.4rem;
+  padding: 0.3rem 0.45rem;
   font: inherit;
   font-size: 0.88rem;
   font-weight: 600;
@@ -395,7 +487,7 @@ select.is-invalid {
   color: var(--danger);
 }
 
-/* ---------------- Toolbar ---------------- */
+/* ---------------- Γραμμή εργαλείων ---------------- */
 
 .toolbar {
   display: flex;
@@ -403,7 +495,7 @@ select.is-invalid {
   gap: 1rem;
   align-items: flex-end;
   padding-bottom: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px solid var(--border);
 }
 
@@ -423,7 +515,7 @@ select.is-invalid {
 }
 
 .toolbar-actions {
-  flex: 2 1 320px;
+  flex: 2 1 340px;
 }
 
 .button-row {
@@ -432,94 +524,184 @@ select.is-invalid {
   gap: 0.5rem;
 }
 
-/* ---------------- Table ---------------- */
+/* Αναφορά εισαγωγής JSON */
+.import-report {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  font-size: 0.9rem;
+}
+
+.import-report.is-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.import-report-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.import-report p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.import-report ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--danger-dark);
+}
+
+.import-report ul:empty {
+  display: none;
+}
+
+/* ---------------- Πίνακες ---------------- */
 
 .table-wrapper {
   width: 100%;
-  /* Only the table itself may scroll horizontally — never the whole page */
+  /* Αν ποτέ χρειαστεί, κυλά οριζόντια ο πίνακας και όχι ολόκληρη η σελίδα */
   overflow-x: auto;
 }
 
-table {
+.data-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 640px;
 }
 
-th,
-td {
+.data-table th,
+.data-table td {
   text-align: left;
   padding: 0.7rem 0.75rem;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
 
-thead th {
+.data-table thead th {
   background: var(--surface-alt);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-tbody tr:hover {
-  background: #f8fafc;
+.data-table tbody tr:hover {
+  background: var(--surface-alt);
 }
 
-.sortable th,
-th.sortable {
+.data-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cell-name {
+  font-weight: 600;
+}
+
+/* Επικεφαλίδες με ταξινόμηση: όλη η επικεφαλίδα είναι κουμπί */
+.data-table th.sortable {
   padding: 0;
 }
 
-th.sortable .sort-button {
+.sort-button {
   width: 100%;
-  background: none;
-  border: none;
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
-  padding: 0.7rem 0.75rem;
-  cursor: pointer;
-  text-align: left;
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  padding: 0.7rem 0.75rem;
+  background: none;
+  border: none;
+  font: inherit;
+  font-weight: 700;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
-th.sortable .sort-button:hover {
+th.numeric .sort-button {
+  justify-content: flex-end;
+}
+
+.sort-button:hover {
   color: var(--primary);
 }
 
 .sort-indicator {
   font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+th[aria-sort="ascending"] .sort-indicator,
+th[aria-sort="descending"] .sort-indicator {
   color: var(--primary);
 }
 
-td.actions-column,
-th.actions-column {
-  text-align: right;
+.actions-column {
+  text-align: right !important;
   white-space: nowrap;
 }
 
-.role-badge {
+/* Γραμμή που επεξεργαζόμαστε / που μόλις αποθηκεύτηκε */
+.data-table tr.is-editing,
+.data-table tr.is-editing:hover {
+  background: var(--primary-soft);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.data-table tr.is-highlighted {
+  animation: highlight 2.5s ease-out;
+}
+
+@keyframes highlight {
+  from {
+    background: var(--warning-soft);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+/* Ετικέτες */
+.chip,
+.badge {
   display: inline-block;
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.role-badge.role-admin {
+.chip {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.badge-in {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-out {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-admin {
   background: #ede9fe;
   color: #6d28d9;
 }
 
-.role-badge.role-user {
+.badge-user {
   background: #e0f2fe;
   color: #0369a1;
 }
@@ -534,7 +716,7 @@ th.actions-column {
   font-weight: 600;
 }
 
-/* ---------------- Pagination ---------------- */
+/* ---------------- Σελιδοποίηση ---------------- */
 
 .pagination {
   display: flex;
@@ -551,7 +733,7 @@ th.actions-column {
   font-weight: 600;
 }
 
-/* ---------------- Modal ---------------- */
+/* ---------------- Παράθυρο επιβεβαίωσης ---------------- */
 
 .modal-backdrop {
   position: fixed;
@@ -562,10 +744,6 @@ th.actions-column {
   justify-content: center;
   padding: 1rem;
   z-index: 50;
-}
-
-.modal-backdrop[hidden] {
-  display: none;
 }
 
 .modal {
@@ -593,7 +771,7 @@ th.actions-column {
   gap: 0.6rem;
 }
 
-/* ---------------- Toast ---------------- */
+/* ---------------- Μήνυμα αναίρεσης ---------------- */
 
 .toast {
   position: fixed;
@@ -603,24 +781,18 @@ th.actions-column {
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
   background: #0f172a;
   color: #fff;
-  padding: 0.7rem 1rem;
+  padding: 0.7rem 0.8rem 0.7rem 1rem;
   border-radius: var(--radius-sm);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
   z-index: 60;
-  max-width: calc(100vw - 2rem);
+  font-size: 0.92rem;
 }
 
-.toast[hidden] {
-  display: none;
-}
-
-.toast span {
-  font-size: 0.9rem;
-}
-
-/* ---------------- Small screens ---------------- */
+/* ---------------- Μικρές οθόνες ---------------- */
 
 @media (max-width: 640px) {
   .card {
@@ -628,26 +800,84 @@ th.actions-column {
   }
 
   .app-header h1 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 
-  .storage-hint {
-    max-width: none;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .toolbar {
-    gap: 0.75rem;
-  }
-
-  .toolbar-field {
+  .toolbar-field,
+  .toolbar-actions {
     flex: 1 1 100%;
   }
 
   .form-actions .btn {
     flex: 1 1 auto;
+  }
+
+  /* Οι πίνακες γίνονται «κάρτες»: κάθε γραμμή είναι ένα μπλοκ και κάθε κελί
+     δείχνει τον τίτλο της στήλης του (από το data-label). Έτσι δεν χρειάζεται
+     καθόλου οριζόντια κύλιση. */
+  .data-table thead tr {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .data-table thead th {
+    display: none;
+  }
+
+  /* Στο κινητό μένουν μόνο τα κουμπιά ταξινόμησης, σαν «chips» */
+  .data-table thead th.sortable {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+
+  .data-table thead th.sortable .sort-button {
+    padding: 0.35rem 0.8rem;
+  }
+
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tbody tr {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--border);
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: left;
+    flex: 0 0 auto;
+  }
+
+  .data-table td:last-child {
+    border-bottom: none;
+  }
+
+  .data-table td.actions-column {
+    justify-content: flex-end;
+  }
+
+  .data-table td.actions-column::before {
+    content: none;
   }
 }
