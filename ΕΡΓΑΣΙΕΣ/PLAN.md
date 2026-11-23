@@ -10,7 +10,7 @@
 |---|---|
 | Ομάδα | 2 άτομα (ίδια ομάδα και στις 2 εργασίες) |
 | Εργασία 1 | υποχρεωτική, 15% του μαθήματος, παράδοση **Δευ 21/12/2026 23:59** |
-| Εργασία 2 | προαιρετική, +15% του μαθήματος, παράδοση **Παρ 15/01/2027 23:59** |
+| Εργασία 2 | προαιρετική, +15% του μαθήματος, παράδοση **Παρ 08/01/2027 23:59** (σύμφωνα με το τελευταίο PDF της εργασίας) |
 | Βαθμολογία | Τ.Β. = 0,15·Β(Ε1) + 0,15·Β(Ε2) + 0,70·Β(γραπτό) (αν παραδώσεις και τις δύο) |
 | Προφορική | υποχρεωτική, **ανά μέλος** (μπορεί να διαφέρει ο βαθμός μεταξύ μελών) |
 | Παράδοση | eclass, ένα zip ανά εργασία, όνομα `p3xxxxxx-p3yyyyyy.zip`, χωρίς `node_modules`, με README |
@@ -49,21 +49,23 @@ Milestone gate: στις **8 Δεκ** πρέπει να δουλεύουν form+
 
 | # | Φάση | Περιεχόμενο | Ώρες | Πότε |
 |---|---|---|---|---|
-| 2.0 | Contracts (2 ώρες, μαζί) | endpoint list, σχήματα JSON, roles matrix, `api.js` interface — γραμμένο ΠΡΙΝ από τον κώδικα | 2 | 22–23 Ιαν |
-| 2.1 | Setup | `server/` + `client/` (Vite React), Express, Mongoose σύνδεση, `.env` + `.env.example`, proxy στο `vite.config.js` | 2,5–3 | 24–26 Ιαν |
-| 2.2 | Σχήματα + seed | `users`/`products`/`orders` schemas (required, unique email, indexes), `npm run seed` (≥10 προϊόντα, 1 Admin, 1 User) | 2,5–3 | 27–29 Ιαν |
-| 2.3 | Auth | register/login/logout, bcrypt (10+ rounds), JWT, middleware `authRequired` + `roleRequired`, 401/403 | 3–4 | 30 Ιαν–2 Φεβ |
-| 2.4 | Products + roles | GET/POST/PUT/DELETE `/api/products`, εφαρμογή roles (Admin only για write) | 2,5–3 | 3–5 Φεβ |
-| 2.5 | Cart + checkout + orders | client cart στο `localStorage`, POST `/api/orders` με μόνο id+qty, **ο server υπολογίζει total**, snapshot items (name/price/qty), `GET /api/orders` (μόνο δικά μου) | 3–4 | 6–9 Φεβ |
-| 2.6 | React εφαρμογή | router, pages: catalog/cart/login-register/my-orders/admin, components `ProductCard/Navbar/Cart`, `useState`/`useEffect`, `api.js`, μηνύματα επιτυχίας/λάθους, loading states | 6–8 | 10–16 Φεβ |
-| 2.7 | Validation + ασφάλεια | ίδιοι κανόνες φόρμας σε client & server, 400 + JSON, secrets μόνο στο `.env` | 1,5–2 | 17–18 Φεβ |
-| 2.8 | Δοκιμές + έγγραφα | πίνακας δοκιμών ≥5 περιπτώσεις, README (λογαριασμοί Admin/User, βήματα), `screenshots.pdf` | 2,5–3 | 19–22 Φεβ |
-| 2.9 | Buffer / integration | end-to-end pass, edge cases, τελικό zip χωρίς `node_modules`/`.env` | 3–4 | 23–29 Φεβ |
-| 2.B | Bonus (προαιρετικό) | reviews 1–5 + μέσος όρος (3h) · order status workflow (2h) · server pagination (2h) | 0–7 | 30 Ιαν–14 Φεβ |
+| 2.0 | Contracts (2 ώρες, μαζί) | endpoint list, σχήματα JSON, roles matrix, `api.js` interface — γραμμένο ΠΡΙΝ από τον κώδικα | 2 | 22 Δεκ |
+| 2.1 | Setup | `server/` + `client/` (Vite React), Express, Mongoose σύνδεση, `.env` + `.env.example`, proxy στο `vite.config.js` | 2,5–3 | 22–23 Δεκ |
+| 2.2 | Σχήματα + seed | `users`/`products`/`orders` schemas (required, unique email, indexes), `npm run seed` (≥10 προϊόντα, 1 Admin, 1 User) | 2,5–3 | 23–24 Δεκ |
+| 2.3 | Auth | register/login/logout, bcrypt (10+ rounds), JWT, middleware `authRequired` + `roleRequired`, 401/403 | 3–4 | 26–27 Δεκ |
+| 2.4 | Products + roles | GET/POST/PUT/DELETE `/api/products`, εφαρμογή roles (Admin only για write) | 2,5–3 | 28 Δεκ |
+| 2.5 | Cart + checkout + orders | client cart στο `localStorage`, POST `/api/orders` με μόνο id+qty, **ο server υπολογίζει total**, snapshot items (name/price/qty), `GET /api/orders` (μόνο δικά μου) | 3–4 | 29–30 Δεκ |
+| 2.6 | React εφαρμογή | router, pages: catalog/cart/login-register/my-orders/admin, components `ProductCard/Navbar/Cart`, `useState`/`useEffect`, `api.js`, μηνύματα επιτυχίας/λάθους, loading states | 6–8 | 31 Δεκ–3 Ιαν |
+| 2.7 | Validation + ασφάλεια | ίδιοι κανόνες φόρμας σε client & server, 400 + JSON, secrets μόνο στο `.env` | 1,5–2 | 3 Ιαν |
+| 2.8 | Δοκιμές + έγγραφα | πίνακας δοκιμών ≥5 περιπτώσεις, README (λογαριασμοί Admin/User, βήματα), `screenshots.pdf` | 2,5–3 | 4–5 Ιαν |
+| 2.9 | Buffer / integration | end-to-end pass, edge cases, τελικό zip χωρίς `node_modules`/`.env` | 3–4 | 6–7 Ιαν |
+| 2.B | Bonus (προαιρετικό) | reviews 1–5 + μέσος όρος (3h) · order status workflow (2h) · server pagination (2h) | 0–7 | 28 Δεκ–4 Ιαν |
 | | **Σύνολο** | | **28–38 (+0–7)** | |
 
-Hard gate στις **9 Φεβ**: πρέπει να δουλεύουν auth + ένα endpoint προϊόντων + ανάγνωση από DB.
-Αν κάνεις και τις δύο εργασίες, μην ξεκινήσεις την Ε2 αν η Ε1 δεν έχει παραδοθεί/δοκιμαστεί.
+Hard gate στις **30 Δεκ**: πρέπει να δουλεύουν auth + ένα endpoint προϊόντων + ανάγνωση από DB.
+Η Ε2 παραδίδεται μόλις 18 μέρες μετά την Ε1 (και μέσα στις γιορτές), άρα δεν χωρά να ξεκινήσει
+από το μηδέν μετά τις 21/12: από τώρα μελετάτε παράλληλα τον κώδικα της Ε2 (server και client),
+ώστε μετά την παράδοση της Ε1 να μένουν μόνο έλεγχοι, προσαρμογές και τα παραδοτέα.
 
 ## Κατανομή στην ομάδα (2 άτομα)
 

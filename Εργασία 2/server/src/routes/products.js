@@ -71,6 +71,22 @@ productsRouter.get('/', async (req, res, next) => {
   }
 });
 
+/**
+ * GET /api/products/categories — οι διαφορετικές κατηγορίες, αλφαβητικά.
+ * Με τη σελιδοποίηση ο client βλέπει μόνο μία σελίδα προϊόντων, άρα δεν μπορεί
+ * να βγάλει μόνος του τις κατηγορίες για το φίλτρο.
+ * Πρέπει να δηλωθεί ΠΡΙΝ από το /:id, αλλιώς το «categories» θα διαβαζόταν ως id.
+ */
+productsRouter.get('/categories', async (req, res, next) => {
+  try {
+    const categories = await Product.distinct('category');
+    categories.sort((a, b) => a.localeCompare(b, 'el'));
+    return res.status(200).json({ categories });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 /** GET /api/products/:id */
 productsRouter.get('/:id', async (req, res, next) => {
   try {
