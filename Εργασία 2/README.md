@@ -67,7 +67,7 @@ npm run dev
 │       ├── App.jsx              # διαδρομές (React Router)
 │       ├── main.jsx
 │       ├── styles.css
-│       ├── components/          # Navbar, ProductCard, ProtectedRoute, Message
+│       ├── components/          # Navbar, ProductCard, Pagination, ProtectedRoute, Message
 │       ├── context/             # AuthContext (JWT), CartContext (localStorage)
 │       ├── lib/validators.js    # ίδιοι κανόνες με τον server
 │       └── pages/               # Catalog, Cart, Login, Register, MyOrders, AdminProducts
@@ -84,7 +84,7 @@ npm run dev
 │   │   ├── middleware/          # auth (JWT/roles), errorHandler
 │   │   ├── utils/validators.js  # κανόνες επικύρωσης
 │   │   └── seed.js              # npm run seed
-│   └── tests/api.test.js        # 30 integration tests (node:test + supertest)
+│   └── tests/api.test.js        # 33 integration tests (node:test + supertest)
 └── screenshots.pdf
 ```
 
@@ -117,7 +117,8 @@ npm run seed -- ../../products.json     # η διαδρομή του αρχεί�
 | POST | `/api/auth/register` | public | 201 | 400 (validation / duplicate email) |
 | POST | `/api/auth/login` | public | 200 | 401 (λάθος credentials) |
 | GET | `/api/auth/me` | σύνδεση | 200 | 401 |
-| GET | `/api/products` | public | 200 | — |
+| GET | `/api/products` (`?search=&category=&sort=&page=&limit=`) | public | 200 | — |
+| GET | `/api/products/categories` | public | 200 | — |
 | GET | `/api/products/:id` | public | 200 | 404 |
 | POST | `/api/products` | **Admin** | 201 | 400, 401, 403 |
 | PUT | `/api/products/:id` | **Admin** | 200 | 400, 401, 403, 404 |
@@ -173,13 +174,14 @@ cd server
 npm test
 ```
 
-30 integration tests (`node:test` + `supertest` + `mongodb-memory-server` — σηκώνουν προσωρινή
+33 integration tests (`node:test` + `supertest` + `mongodb-memory-server` — σηκώνουν προσωρινή
 MongoDB στη μνήμη, δεν χρειάζεται εγκατεστημένο server). Καλύπτουν: hashing, μη επιστροφή
 password, 201/400 στην εγγραφή, duplicate email, 401 σε λάθος κωδικό, 400 σε μη αλφαριθμητικό
 password (όχι 500), 401 χωρίς token, 403 για User, 201/200 για Admin σε POST/PUT/DELETE
 προϊόντων, 404 (έγκυρο αλλά άγνωστο και μη έγκυρο id), 400 για αρνητική τιμή/ποσότητα/κενό
 καλάθι/άγνωστο ή μη έγκυρο productId/μη διαθέσιμο προϊόν, αναζήτηση με regex ειδικούς
-χαρακτήρες, υπολογισμό total από τη βάση (με παραποιημένη τιμή από τον client), απομόνωση
+χαρακτήρες, σελιδοποίηση μαζί με φίλτρο και ταξινόμηση, λίστα κατηγοριών, κανόνα email ίδιο
+με την Εργασία 1, υπολογισμό total από τη βάση (με παραποιημένη τιμή από τον client), απομόνωση
 παραγγελιών ανά χρήστη και αλλαγή κατάστασης παραγγελίας μόνο από Admin. Δείτε το
 `ΠΙΝΑΚΑΣ-ΔΟΚΙΜΩΝ.md`.
 
@@ -189,13 +191,21 @@ password (όχι 500), 401 χωρίς token, 403 για User, 201/200 για Adm
 
 ## Screenshots
 
-Το `screenshots.pdf` περιλαμβάνει: κατάλογο, καλάθι, σύνδεση, εγγραφή με μη έγκυρα πεδία,
-ιστορικό παραγγελιών, διαχείριση προϊόντων (Admin) και προβολή σε κινητό — με λεζάντα σε κάθε εικόνα.
+Το `screenshots.pdf` έχει 10 εικόνες με λεζάντα: κατάλογο με κουμπιά σελίδων, αναζήτηση/φίλτρο/
+ταξινόμηση, εγγραφή με μη έγκυρα πεδία, σύνδεση (με λάθος κωδικό), καλάθι, ολοκλήρωση
+παραγγελίας, ιστορικό παραγγελιών, διαχείριση προϊόντων (Admin), αλλαγή κατάστασης παραγγελίας
+(Admin) και προβολή σε κινητό. Οι εικόνες βγήκαν από την εφαρμογή σε λειτουργία, με τα δεδομένα
+του `npm run seed`.
 
 ## Bonus που υλοποιήθηκαν
 
-- **Σελιδοποίηση στον server:** `GET /api/products?page=2&limit=10` επιστρέφει
-  `{ products, page, pageSize, total, totalPages }` (έτοιμο για buttons στη React).
+- **Σελιδοποίηση:** ο server επιστρέφει τα προϊόντα ανά σελίδες
+  (`GET /api/products?page=2&limit=6` → `{ products, page, pageSize, total, totalPages }`) και ο
+  κατάλογος της React έχει κουμπιά σελίδων (component `Pagination`). Η αναζήτηση, το φίλτρο
+  κατηγορίας και η ταξινόμηση στέλνονται κι αυτά ως παράμετροι, ώστε η σελιδοποίηση να γίνεται
+  **μετά** το φίλτρο. Οι κατηγορίες του φίλτρου έρχονται από το `GET /api/products/categories`,
+  αφού ο client βλέπει πλέον μόνο μία σελίδα προϊόντων. Η αναζήτηση στέλνεται 300ms μετά το
+  τελευταίο πλήκτρο (debounce), για να μη γίνεται ένα αίτημα ανά γράμμα.
 - **Κατάσταση παραγγελίας:** ο Admin αλλάζει την κατάσταση μιας παραγγελίας
   (`PUT /api/orders/:id/status`: «Σε επεξεργασία → Απεστάλη → Ολοκληρώθηκε»), και ο User
   βλέπει την ενημερωμένη κατάσταση στο ιστορικό του. Στη σελίδα παραγγελιών ο Admin βλέπει

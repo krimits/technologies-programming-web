@@ -60,6 +60,7 @@ export const productsApi = {
     const suffix = query.toString() ? `?${query.toString()}` : '';
     return request(`/products${suffix}`);
   },
+  categories: () => request('/products/categories'),
   create: (data) => request('/products', { method: 'POST', body: data, auth: true }),
   update: (id, data) => request(`/products/${id}`, { method: 'PUT', body: data, auth: true }),
   remove: (id) => request(`/products/${id}`, { method: 'DELETE', auth: true })

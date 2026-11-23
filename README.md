@@ -43,6 +43,6 @@ npm run dev                 # app στο http://localhost:5173
 | Έργασία | Έλεγχοι | Αποτέλεσμα |
 |---|---|---|
 | Εργασία 1 | 45 end-to-end tests σε headless Chromium (κανόνες επικύρωσης, CRUD, ταξινόμηση, αναζήτηση/φίλτρο, σελιδοποίηση, αναίρεση, import/export, `localStorage`, κινητό 360px) | ✅ 45/45 |
-| Εργασία 2 | 30 integration tests του REST API (`node:test` + `supertest` + `mongodb-memory-server`) | ✅ 30/30 |
+| Εργασία 2 | 33 integration tests του REST API (`node:test` + `supertest` + `mongodb-memory-server`) + 16 έλεγχοι στον browser (React → Express → MongoDB) | ✅ 33/33 και 16/16 |
 
 Τα tests της Εργασίας 2: `cd "Εργασία 2/server" && npm test`.

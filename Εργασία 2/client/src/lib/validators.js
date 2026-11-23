@@ -2,7 +2,8 @@
    Ο client ελέγχει για UX, αλλά ο server ελέγχει ξανά (ο server είναι η αλήθεια). */
 
 export const GREEK_NAME_PATTERN = /^[Α-Ω]+([ \-][Α-Ω]+)*$/u;
-export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+/** Μορφή email: χαρακτήρες@domain.κατάληξη — ο ίδιος κανόνας με το EMAIL_PATTERN της Εργασίας 1. */
+export const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 export const PASSWORD_SYMBOLS = '!@#$%^&*';
 
 export function validateGreekName(value, label) {

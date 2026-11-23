@@ -194,6 +194,20 @@ body {
   font-weight: 600;
 }
 
+/* ---------- Pagination ---------- */
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination .btn {
+  min-width: 2.6rem;
+}
+
 /* ---------- Forms ---------- */
 
 .form-grid {

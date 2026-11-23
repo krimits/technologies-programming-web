@@ -5,7 +5,8 @@
 /** Κεφαλαία ελληνικά χωρίς τόνους. Το εύρος Α-Ω (U+0391-U+03A9) αποκλείει
  *  αυτόματα τα Ά Έ Ή Ί Ό Ύ Ώ (U+0386-U+038F) και τα Ϊ Ϋ (U+03AA/AB). */
 export const GREEK_NAME_PATTERN = /^[Α-Ω]+([ \-][Α-Ω]+)*$/u;
-export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+/** Μορφή email: χαρακτήρες@domain.κατάληξη — ο ίδιος κανόνας με το EMAIL_PATTERN της Εργασίας 1. */
+export const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 export const PASSWORD_SYMBOLS = '!@#$%^&*';
 
 export function validateGreekName(value, label) {

@@ -239,6 +239,49 @@ test('GET /api/products με regex ειδικούς χαρακτήρες στο 
   assert.equal(response.status, 200);
 });
 
+test('GET /api/products/categories → διαφορετικές κατηγορίες, αλφαβητικά', async () => {
+  await Product.insertMany([
+    { name: 'Α', category: 'Σπίτι', price: 1 },
+    { name: 'Β', category: 'Βιβλία', price: 1 },
+    { name: 'Γ', category: 'Βιβλία', price: 1 }
+  ]);
+
+  const response = await request(app).get('/api/products/categories');
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body.categories, ['Βιβλία', 'Σπίτι']);
+});
+
+test('σελιδοποίηση: ?page=2 μαζί με φίλτρο και ταξινόμηση', async () => {
+  // 7 βιβλία με τιμές 1..7 και ένα προϊόν άλλης κατηγορίας που δεν πρέπει να μετρά
+  await Product.insertMany([
+    ...[1, 2, 3, 4, 5, 6, 7].map((price) => ({ name: `Βιβλίο ${price}`, category: 'Βιβλία', price })),
+    { name: 'Θερμός', category: 'Σπίτι', price: 100 }
+  ]);
+
+  const response = await request(app)
+    .get('/api/products')
+    .query({ category: 'Βιβλία', sort: '-price', page: 2, limit: 3 });
+
+  assert.equal(response.status, 200);
+  assert.equal(response.body.total, 7);
+  assert.equal(response.body.totalPages, 3);
+  assert.equal(response.body.page, 2);
+  assert.deepEqual(response.body.products.map((product) => product.price), [4, 3, 2]);
+});
+
+test('εγγραφή με email που απορρίπτει και η Εργασία 1 (ελληνικοί χαρακτήρες) → 400', async () => {
+  // Ο παλιός, πιο χαλαρός κανόνας το δεχόταν· ο κοινός κανόνας με την Εργασία 1 όχι.
+  const response = await request(app).post('/api/auth/register').send({
+    firstName: 'ΓΕΩΡΓΙΟΣ',
+    lastName: 'ΠΑΠΑΣ',
+    email: 'γιώργος@aueb.gr',
+    password: '123A$6789',
+    confirmation: '123A$6789'
+  });
+  assert.equal(response.status, 400);
+  assert.ok(response.body.details.email);
+});
+
 test('PUT /api/products/:id με Admin → 200, με User → 403', async () => {
   await createUser({ email: 'admin@aueb.gr', role: 'Admin' });
   await createUser({ email: 'user@aueb.gr', role: 'User' });
